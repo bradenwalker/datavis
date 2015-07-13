@@ -1,7 +1,3 @@
-//Initialize data set
-var dataset = [5, 10, 13, 19, 21, 25, 22, 18, 15, 13,
-                11, 12, 15, 20, 18, 17, 16, 18, 23, 25];
-
 //Random data generator
 var randData = function(numElements) {
   var newArr = [];
@@ -16,6 +12,28 @@ var randData = function(numElements) {
 
   return newArr;
 };
+
+//Sample SWAPI dataset
+var dataset = ['12500', '10200', '7200', '8900', '4900', '12120', '12240'];
+
+var labeldata = dataset;
+
+//Normalize data
+var normalize = function(arr) {
+  var normDataset = [];
+
+  var max = function (arr) {
+    return Math.max.apply(null, arr);
+  };
+
+  for (var i = 0; i < arr.length; i++) {
+    normDataset[i] = Math.round( arr[i] / max(arr) * 20 );
+  }
+
+  return normDataset;
+};
+
+dataset = normalize(dataset);
 
 //Set up SVG height and width
 var w = 600;
@@ -35,12 +53,29 @@ var xScale = d3.scale.ordinal()
 
 var yScale = d3.scale.linear()
              .domain([0,d3.max(dataset)])
-             .range([0,h-(h*0.1)]);                             
+             .range([h*0.1,h-(h*0.25)]);                             
 
-//Set up axes
+//Set up custom axis tick labels
+var axisLabels = ['Alderaan', 
+                  'Yavin IV',
+                  'Hoth',
+                  'Dagobah',
+                  'Endor',
+                  'Naboo',
+                  'Coruscant'];
+
+//Set up units
+var units = 'Kamino'
+
+var formatLabel = function(d) {
+  return axisLabels[d % axisLabels.length];
+};
+
+//Set up horizontal axis
 var xAxis = d3.svg.axis()
               .scale(xScale)
-              .orient('bottom');
+              .orient('bottom')
+              .tickFormat(formatLabel);
 
 //Create graph bars
 var rects = svg.selectAll('rect')
@@ -58,7 +93,7 @@ var rects = svg.selectAll('rect')
                 return (yScale(d) - padding);
               })
               .attr('fill', function(d) {
-                return 'rgb(0,0,' + (d * 10) + ')';
+                return 'rgb(' + (d * 8) + ',' + (d * 6) + ',' + (d * 4) + ')';
               });
 
 
@@ -67,7 +102,7 @@ var labels = svg.selectAll('text')
                 .data(dataset)
                 .enter()
                 .append('text')
-                .text(function(d) { return d; })
+                .text(function(d,i) { return labeldata[i]; })
                 .attr('x', function(d,i) {
                   return (xScale(i) + xScale.rangeBand() / 2);
                 })
@@ -88,7 +123,7 @@ svg.append('g')
 //Test button to change data
 d3.select('.changeBtn').on('click', function() {
   d3.event.preventDefault();
-  dataset = randData(20);
+  dataset = randData(5);
 
   xScale = d3.scale.ordinal()
              .domain(d3.range(dataset.length))
@@ -112,11 +147,11 @@ d3.select('.changeBtn').on('click', function() {
       return (yScale(d) - padding);
      })
      .attr('fill', function(d) {
-      return ('rgb(0,0,' + (d * 10) + ')');
+      return 'rgb(' + (d * 8) + ',' + (d * 6) + ',' + (d * 4) + ')';
      });
 
   svg.selectAll('text')
-     .data(dataset)
+     .data(labeldata)
      .transition()
      .delay(function(d,i) {
       return i / dataset.length * 250;

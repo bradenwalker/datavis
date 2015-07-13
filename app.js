@@ -20,7 +20,7 @@ var randData = function(numElements) {
 //Set up SVG height and width
 var w = 600;
 var h = 300;
-var barPadding = 1;
+var padding = 20;
 
 var svg = d3.select('body')
             .append('svg')
@@ -37,6 +37,11 @@ var yScale = d3.scale.linear()
              .domain([0,d3.max(dataset)])
              .range([0,h-(h*0.1)]);                             
 
+//Set up axes
+var xAxis = d3.svg.axis()
+              .scale(xScale)
+              .orient('bottom');
+
 //Create graph bars
 var rects = svg.selectAll('rect')
               .data(dataset)
@@ -50,7 +55,7 @@ var rects = svg.selectAll('rect')
               })
               .attr('width', xScale.rangeBand())
               .attr('height', function(d) {
-                return yScale(d);
+                return (yScale(d) - padding);
               })
               .attr('fill', function(d) {
                 return 'rgb(0,0,' + (d * 10) + ')';
@@ -74,6 +79,11 @@ var labels = svg.selectAll('text')
                 .attr('font-size', '11px')
                 .attr('text-anchor', 'middle');
 
+//Generate axes
+svg.append('g')
+   .attr('class', 'axis')
+   .attr('transform', 'translate(0,' + (h - padding) + ')')
+   .call(xAxis);
 
 //Test button to change data
 d3.select('.changeBtn').on('click', function() {
@@ -91,12 +101,15 @@ d3.select('.changeBtn').on('click', function() {
   svg.selectAll('rect')
      .data(dataset)
      .transition()
-     .duration(1000)
+     .delay(function(d,i) {
+      return i / dataset.length * 250;
+     })
+     .duration(500)
      .attr('y', function(d) {
       return ( h - yScale(d) );
      })
      .attr('height', function(d) {
-      return yScale(d);
+      return (yScale(d) - padding);
      })
      .attr('fill', function(d) {
       return ('rgb(0,0,' + (d * 10) + ')');
@@ -105,7 +118,10 @@ d3.select('.changeBtn').on('click', function() {
   svg.selectAll('text')
      .data(dataset)
      .transition()
-     .duration(1000)
+     .delay(function(d,i) {
+      return i / dataset.length * 250;
+     })
+     .duration(500)
      .text(function(d) { return d; })
      .attr('x', function(d,i) {
       return (xScale(i) + xScale.rangeBand() / 2);

@@ -3,6 +3,18 @@ svg {
 	margin: 10% auto;
 }
 
+div {
+    margin: -100px auto;
+    width: 60%;
+    padding: 10px;
+    text-align: center;
+}
+
+button {
+	display: block-inline;
+	margin: 0 10px;
+}
+
 .axis path,
 .axis line {
 	fill: none;

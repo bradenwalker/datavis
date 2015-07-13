@@ -14,7 +14,7 @@ var randData = function(numElements) {
 };
 
 //Sample SWAPI dataset
-var dataset = ['12500', '10200', '7200', '8900', '4900', '12120', '12240'];
+var dataset = ['12500', '10200', '7200', '8900', '4900', '12120', '12240', '19720', '11370'];
 
 var labeldata = dataset;
 
@@ -38,7 +38,7 @@ dataset = normalize(dataset);
 //Set up SVG height and width
 var w = 600;
 var h = 300;
-var padding = 20;
+var padding = 40;
 
 var svg = d3.select('body')
             .append('svg')
@@ -62,10 +62,12 @@ var axisLabels = ['Alderaan',
                   'Dagobah',
                   'Endor',
                   'Naboo',
-                  'Coruscant'];
+                  'Coruscant',
+                  'Kamino',
+                  'Geonosis'];
 
 //Set up units
-var units = 'Kamino'
+var units = '(Diameter)';
 
 var formatLabel = function(d) {
   return axisLabels[d % axisLabels.length];
@@ -120,6 +122,14 @@ svg.append('g')
    .attr('transform', 'translate(0,' + (h - padding) + ')')
    .call(xAxis);
 
+//Generate units
+svg.append('text')
+   .attr('font-family', 'sans-serif')
+   .attr('font-size', '11px')
+   .attr('text-anchor', 'middle')
+   .attr('transform', 'translate(' + w / 2 + ',' + (h - padding * 0.1) + ')')
+   .text(units);
+
 //Test button to change data
 d3.select('.changeBtn').on('click', function() {
   d3.event.preventDefault();
@@ -165,12 +175,5 @@ d3.select('.changeBtn').on('click', function() {
       return h - yScale(d) + 14;
      });
 });
-
-
-
-
-
-
-
 
 

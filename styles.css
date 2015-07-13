@@ -1,0 +1,11 @@
+svg {
+	margin: 0 auto;
+}
+
+div.bar {
+	display: inline-block;
+	width: 20px;
+	height: 75px;
+	background-color: teal;
+	margin-right: 5px;
+}

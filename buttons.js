@@ -1,8 +1,8 @@
 // Create array for button labels
-var buttonArr = ['Rotation-Period',
+var buttonArr = ['Gravity',
 				 'Orbital-Period',
+				 'Rotation-Period',
 				 'Diameter',
-				 'Gravity',
 				 'Population'];
 
 //Different datasets

@@ -13,8 +13,7 @@ var randData = function(numElements) {
   return newArr;
 };
 
-//Sample SWAPI dataset
-var dataset = ['12500', '10200', '7200', '8900', '4900', '12120', '12240', '19720', '11370'];
+var dataset = ['0', '0', '0', '0', '0', '0', '0', '0', '0'];
 
 var labeldata = dataset;
 
@@ -36,7 +35,7 @@ var normalize = function(arr, val) {
 dataset = normalize(dataset, 20);
 
 //Set up SVG height and width
-var w = 600;
+var w = 700;
 var h = 300;
 var padding = 40;
 
@@ -67,7 +66,7 @@ var axisLabels = ['Alderaan',
                   'Geonosis'];
 
 //Set up units
-var units = 'Diameter';
+var units = '';
 
 var formatLabel = function(d) {
   return axisLabels[d % axisLabels.length];
@@ -87,16 +86,9 @@ var rects = svg.selectAll('rect')
               .attr('x', function(d,i) {
                 return xScale(i);
               })
-              .attr('y', function(d) {
-                return ( h - yScale(d) );
-              })
+              .attr('y', '0')
               .attr('width', xScale.rangeBand())
-              .attr('height', function(d) {
-                return (yScale(d) - padding);
-              })
-              .attr('fill', function(d) {
-                return 'rgb(' + (d * 8) + ',' + (d * 6) + ',' + (d * 4) + ')';
-              });
+              .attr('height', '0');
 
 
 //Text labels for graph bar data
@@ -109,14 +101,13 @@ var labels = svg.selectAll('text')
                   return (xScale(i) + xScale.rangeBand() / 2);
                 })
                 .attr('y', function(d) {
-                  return h - (yScale(d)) + 14;
+                  return 0;
                 })
                 .attr('fill', 'white')
-                .attr('font-family', 'sans-serif')
-                .attr('font-size', '8px')
+                .attr('font-size', '9px')
                 .attr('text-anchor', 'middle');
 
-//Generate axes
+//Generate x-axis
 svg.append('g')
    .attr('class', 'axis')
    .attr('transform', 'translate(0,' + (h - padding) + ')')
@@ -124,58 +115,10 @@ svg.append('g')
 
 //Generate units
 svg.append('text')
-   .attr('font-family', 'sans-serif')
    .attr('font-weight', 'bold')
    .attr('font-size', '14px')
    .attr('text-anchor', 'middle')
    .attr('id', 'units')
    .attr('transform', 'translate(' + w / 2 + ',' + (h - padding * 0.1) + ')')
    .text(units);
-
-//Test button to change data
-d3.select('.changeBtn').on('click', function() {
-  d3.event.preventDefault();
-  dataset = randData(5);
-
-  xScale = d3.scale.ordinal()
-             .domain(d3.range(dataset.length))
-             .rangeRoundBands([0,w], 0.05);
-
-  yScale = d3.scale.linear()
-             .domain([0,d3.max(dataset)])
-             .range([0,h-(h*0.1)]);
-
-  svg.selectAll('rect')
-     .data(dataset)
-     .transition()
-     .delay(function(d,i) {
-      return i / dataset.length * 250;
-     })
-     .duration(500)
-     .attr('y', function(d) {
-      return ( h - yScale(d) );
-     })
-     .attr('height', function(d) {
-      return (yScale(d) - padding);
-     })
-     .attr('fill', function(d) {
-      return 'rgb(' + (d * 8) + ',' + (d * 6) + ',' + (d * 4) + ')';
-     });
-
-  svg.selectAll('text')
-     .data(labeldata)
-     .transition()
-     .delay(function(d,i) {
-      return i / dataset.length * 250;
-     })
-     .duration(500)
-     .text(function(d) { return d; })
-     .attr('x', function(d,i) {
-      return (xScale(i) + xScale.rangeBand() / 2);
-     })
-     .attr('y', function(d) {
-      return h - yScale(d) + 14;
-     });
-});
-
 

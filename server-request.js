@@ -55,6 +55,8 @@ dataBtn.onclick = function () {
 				  .transition(4000)
 				  .delay(2000)
 				  .attr('style', 'color:rgba(0,0,0,0)');
+				dataPopulated = true;
+				d3.selectAll('#warning_text').remove();
 			} else {
 				console.error('Error: ' + httpRequest.status);
 			}

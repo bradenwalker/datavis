@@ -1,3 +1,5 @@
+var dataPopulated = false;
+
 // Create array for button labels
 var buttonArr = ['Gravity',
 				 'Orbital-Period',
@@ -26,268 +28,389 @@ d3.selectAll('#button_div')
   	return d;
   });
 
+
+//Error message for no data
+var noDataMsg = '(Click "Get Data" to populate data set.)';
+
 //Click event for Rotation Period
 d3.select('#Rotation-Period').on('click', function() {
-  d3.event.preventDefault();
-  console.log('Clicked on Rotation Period');
-  dataset = rotationData;
+  if(dataPopulated) {
+    d3.event.preventDefault();
+    console.log('Clicked on Rotation Period');
+    dataset = rotationData;
 
-  xScale = d3.scale.ordinal()
-             .domain(d3.range(dataset.length))
-             .rangeRoundBands([0,w], 0.05);
+    xScale = d3.scale.ordinal()
+               .domain(d3.range(dataset.length))
+               .rangeRoundBands([0,w], 0.05);
 
-  yScale = d3.scale.linear()
-             .domain([0,d3.max(dataset)])
-             .range([0,h-(h*0.5)]);
+    yScale = d3.scale.linear()
+               .domain([0,d3.max(dataset)])
+               .range([0,h-(h*0.5)]);
 
-  svg.selectAll('rect')
-     .data(dataset)
-     .transition()
-     .delay(function(d,i) {
-      return i / dataset.length * 250;
-     })
-     .duration(500)
-     .attr('y', function(d) {
-      return ( h - yScale(d) );
-     })
-     .attr('height', function(d) {
-      return (yScale(d) - padding);
-     })
-     .attr('fill', function(d) {
-      return 'rgb(' + (d * 4) + ',' + (d * 8) + ',' + (d * 4) + ')';
-     });
+    svg.selectAll('rect')
+       .data(dataset)
+       .transition()
+       .delay(function(d,i) {
+        return i / dataset.length * 250;
+       })
+       .duration(500)
+       .attr('y', function(d) {
+        return ( h - yScale(d) );
+       })
+       .attr('height', function(d) {
+        return (yScale(d) - padding);
+       })
+       .attr('fill', function(d) {
+        return 'rgb(' + (d * 4) + ',' + (d * 8) + ',' + (d * 4) + ')';
+       });
 
-  svg.selectAll('text')
-     .data(dataset)
-     .transition()
-     .delay(function(d,i) {
-      return i / dataset.length * 250;
-     })
-     .duration(500)
-     .text(function(d) { return d; })
-     .attr('x', function(d,i) {
-      return (xScale(i) + xScale.rangeBand() / 2);
-     })
-     .attr('y', function(d) {
-      return h - yScale(d) + 14;
-     });
+    svg.selectAll('text')
+       .data(dataset)
+       .transition()
+       .delay(function(d,i) {
+        return i / dataset.length * 250;
+       })
+       .duration(500)
+       .text(function(d) { return d; })
+       .attr('x', function(d,i) {
+        return (xScale(i) + xScale.rangeBand() / 2);
+       })
+       .attr('y', function(d) {
+        return h - yScale(d) + 14;
+       });
 
-  svg.select('#units')
-     .text('Rotation Period (hours)');
+    svg.select('#units')
+       .text('Rotation Period (hours)');
+  } else {
+    console.log('Data not yet loaded.');
+    d3.select('svg')
+      .append('text')
+      .attr('id', 'warning_text')
+      .attr('x', w / 2)
+      .attr('y', h / 2 - 100)
+      .attr('opacity', '0')
+      .attr('font-weight', 'bold')
+      .attr('font-size', '24')
+      .attr('fill', 'black')
+      .attr('text-anchor', 'middle')
+      .html(noDataMsg);
+    d3.select('#warning_text')
+      .transition(1000)
+      .attr('opacity', '1');
+    d3.select('#warning_text')
+      .transition(1000)
+      .delay(2000)
+      .attr('opacity', '0');
+  }
 });
 
 //Click event for Orbital Period
 d3.select('#Orbital-Period').on('click', function() {
-  d3.event.preventDefault();
-  console.log('Clicked on Orbital Period');
-  labelData = orbitalData;
-  dataset = normalize(orbitalData, 51125);
-  for (var i = 0; i < dataset.length; i++) {
-      dataset[i] = dataset[i] / 10;
-    }
-
-  xScale = d3.scale.ordinal()
-             .domain(d3.range(dataset.length))
-             .rangeRoundBands([0,w], 0.05);
-
-  yScale = d3.scale.linear()
-             .domain([0,d3.max(dataset)])
-             .range([100,h-20]);
-
-  svg.selectAll('rect')
-     .data(dataset)
-     .transition()
-     .delay(function(d,i) {
-      return i / dataset.length * 250;
-     })
-     .duration(500)
-     .attr('y', function(d) {
-      return ( h - yScale(d) );
-     })
-     .attr('height', function(d) {
-      return (yScale(d) - padding);
-     })
-     .attr('fill', function(d) {
-      if (d < 1000) {
-        return 'rgb(' + (d * .05 * 2) + ',' + (d * .05 * 2) + ',' + (d/2 * .05 * 8) + ')';
-      } else {
-        return 'rgb(' + (d/10 * .05 * 2) + ',' + (d/50 * .05 * 2) + ',' + (d/10 * .05 * 8) + ')';
+  if (dataPopulated) {
+    d3.event.preventDefault();
+    console.log('Clicked on Orbital Period');
+    labelData = orbitalData;
+    dataset = normalize(orbitalData, 51125);
+    for (var i = 0; i < dataset.length; i++) {
+        dataset[i] = dataset[i] / 10;
       }
-     });
 
-  svg.selectAll('text')
-     .data(dataset)
-     .transition()
-     .delay(function(d,i) {
-      return i / dataset.length * 250;
-     })
-     .duration(500)
-     .text(function(d) { return Math.floor(d); })
-     .attr('x', function(d,i) {
-      return (xScale(i) + xScale.rangeBand() / 2);
-     })
-     .attr('y', function(d) {
-      return h - yScale(d) + 14;
-     });
+    xScale = d3.scale.ordinal()
+               .domain(d3.range(dataset.length))
+               .rangeRoundBands([0,w], 0.05);
 
-  svg.select('#units')
-     .text('Orbital Period (days)');
+    yScale = d3.scale.linear()
+               .domain([0,d3.max(dataset)])
+               .range([100,h-20]);
+
+    svg.selectAll('rect')
+       .data(dataset)
+       .transition()
+       .delay(function(d,i) {
+        return i / dataset.length * 250;
+       })
+       .duration(500)
+       .attr('y', function(d) {
+        return ( h - yScale(d) );
+       })
+       .attr('height', function(d) {
+        return (yScale(d) - padding);
+       })
+       .attr('fill', function(d) {
+        if (d < 1000) {
+          return 'rgb(' + (d * .05 * 2) + ',' + (d * .05 * 2) + ',' + (d/2 * .05 * 8) + ')';
+        } else {
+          return 'rgb(' + (d/10 * .05 * 2) + ',' + (d/50 * .05 * 2) + ',' + (d/10 * .05 * 8) + ')';
+        }
+       });
+
+    svg.selectAll('text')
+       .data(dataset)
+       .transition()
+       .delay(function(d,i) {
+        return i / dataset.length * 250;
+       })
+       .duration(500)
+       .text(function(d) { return Math.floor(d); })
+       .attr('x', function(d,i) {
+        return (xScale(i) + xScale.rangeBand() / 2);
+       })
+       .attr('y', function(d) {
+        return h - yScale(d) + 14;
+       });
+
+    svg.select('#units')
+       .text('Orbital Period (days)');
+  } else {
+    console.log('Data not yet loaded.');
+    d3.select('svg')
+      .append('text')
+      .attr('id', 'warning_text')
+      .attr('x', w / 2)
+      .attr('y', h / 2 - 100)
+      .attr('opacity', '0')
+      .attr('font-weight', 'bold')
+      .attr('font-size', '24')
+      .attr('fill', 'black')
+      .attr('text-anchor', 'middle')
+      .html(noDataMsg);
+    d3.select('#warning_text')
+      .transition(1000)
+      .attr('opacity', '1');
+    d3.select('#warning_text')
+      .transition(1000)
+      .delay(2000)
+      .attr('opacity', '0');
+  }
 });
 
 //Click event for Diameter
 d3.select('#Diameter').on('click', function() {
-  d3.event.preventDefault();
-  console.log('clicked on Rotation Period');
-  dataset = normalize(diameterData, 20);
+ if (dataPopulated) {
+    d3.event.preventDefault();
+    console.log('clicked on Rotation Period');
+    dataset = normalize(diameterData, 20);
 
-  xScale = d3.scale.ordinal()
-             .domain(d3.range(dataset.length))
-             .rangeRoundBands([0,w], 0.05);
+    xScale = d3.scale.ordinal()
+               .domain(d3.range(dataset.length))
+               .rangeRoundBands([0,w], 0.05);
 
-  yScale = d3.scale.linear()
-             .domain([0,d3.max(dataset)])
-             .range([100,h-(h*0.1)]);
+    yScale = d3.scale.linear()
+               .domain([0,d3.max(dataset)])
+               .range([100,h-(h*0.1)]);
 
-  svg.selectAll('rect')
-     .data(dataset)
-     .transition()
-     .delay(function(d,i) {
-      return i / dataset.length * 250;
-     })
-     .duration(500)
-     .attr('y', function(d) {
-      return ( h - yScale(d) );
-     })
-     .attr('height', function(d) {
-      return (yScale(d) - padding);
-     })
-     .attr('fill', function(d) {
-      if (d < 10) {
-        var multiplier = 10;
-        return 'rgb(' + (d * multiplier * 8) + ',' + (d * multiplier * 6) + ',' + (d * multiplier * 4) + ')';
-      } else {
-        var limiter = .55;
-        return 'rgb(' + (d/limiter * 8) + ',' + (d/limiter * 6) + ',' + (d/limiter * 4) + ')'; 
-      }
-     });
+    svg.selectAll('rect')
+       .data(dataset)
+       .transition()
+       .delay(function(d,i) {
+        return i / dataset.length * 250;
+       })
+       .duration(500)
+       .attr('y', function(d) {
+        return ( h - yScale(d) );
+       })
+       .attr('height', function(d) {
+        return (yScale(d) - padding);
+       })
+       .attr('fill', function(d) {
+        if (d < 10) {
+          var multiplier = 10;
+          return 'rgb(' + (d * multiplier * 8) + ',' + (d * multiplier * 6) + ',' + (d * multiplier * 4) + ')';
+        } else {
+          var limiter = .55;
+          return 'rgb(' + (d/limiter * 8) + ',' + (d/limiter * 6) + ',' + (d/limiter * 4) + ')'; 
+        }
+       });
 
-  svg.selectAll('text')
-     .data(dataset)
-     .transition()
-     .delay(function(d,i) {
-      return i / dataset.length * 250;
-     })
-     .duration(500)
-     .text(function(d,i) { return diameterData[i]; })
-     .attr('x', function(d,i) {
-      return (xScale(i) + xScale.rangeBand() / 2);
-     })
-     .attr('y', function(d) {
-      return h - yScale(d) + 14;
-     });
+    svg.selectAll('text')
+       .data(dataset)
+       .transition()
+       .delay(function(d,i) {
+        return i / dataset.length * 250;
+       })
+       .duration(500)
+       .text(function(d,i) { return diameterData[i]; })
+       .attr('x', function(d,i) {
+        return (xScale(i) + xScale.rangeBand() / 2);
+       })
+       .attr('y', function(d) {
+        return h - yScale(d) + 14;
+       });
 
-  svg.select('#units')
-     .text('Diameter (km)');
+    svg.select('#units')
+       .text('Diameter (km)');
+  } else {
+    console.log('Data not yet loaded.');
+    d3.select('svg')
+      .append('text')
+      .attr('id', 'warning_text')
+      .attr('x', w / 2)
+      .attr('y', h / 2 - 100)
+      .attr('opacity', '0')
+      .attr('font-weight', 'bold')
+      .attr('font-size', '24')
+      .attr('fill', 'black')
+      .attr('text-anchor', 'middle')
+      .html(noDataMsg);
+    d3.select('#warning_text')
+      .transition(1000)
+      .attr('opacity', '1');
+    d3.select('#warning_text')
+      .transition(1000)
+      .delay(2000)
+      .attr('opacity', '0');
+  }
 });
 
 //Click event for Gravity
 d3.select('#Gravity').on('click', function() {
-  d3.event.preventDefault();
-  console.log('Clicked on Gravity');
-  dataset = gravityData;
+  if (dataPopulated) {
+    d3.event.preventDefault();
+    console.log('Clicked on Gravity');
+    dataset = gravityData;
 
-  xScale = d3.scale.ordinal()
-             .domain(d3.range(dataset.length))
-             .rangeRoundBands([0,w], 0.05);
+    xScale = d3.scale.ordinal()
+               .domain(d3.range(dataset.length))
+               .rangeRoundBands([0,w], 0.05);
 
-  yScale = d3.scale.linear()
-             .domain([0,d3.max(dataset)])
-             .range([h*0.25,h-(h*0.1)]);
+    yScale = d3.scale.linear()
+               .domain([0,d3.max(dataset)])
+               .range([h*0.25,h-(h*0.1)]);
 
-  svg.selectAll('rect')
-     .data(dataset)
-     .transition()
-     .delay(function(d,i) {
-      return i / dataset.length * 250;
-     })
-     .duration(500)
-     .attr('y', function(d) {
-      return ( h - yScale(d) );
-     })
-     .attr('height', function(d) {
-      return (yScale(d) - padding);
-     })
-     .attr('fill', function(d) {
-      return 'rgb(' + (d * 20 * 8) + ',' + (d * 20 * 1) + ',' + (d * 20 * 4) + ')';
-     });
+    svg.selectAll('rect')
+       .data(dataset)
+       .transition()
+       .delay(function(d,i) {
+        return i / dataset.length * 250;
+       })
+       .duration(500)
+       .attr('y', function(d) {
+        return ( h - yScale(d) );
+       })
+       .attr('height', function(d) {
+        return (yScale(d) - padding);
+       })
+       .attr('fill', function(d) {
+        return 'rgb(' + (d * 20 * 8) + ',' + (d * 20 * 1) + ',' + (d * 20 * 4) + ')';
+       });
 
-  svg.selectAll('text')
-     .data(dataset)
-     .transition()
-     .delay(function(d,i) {
-      return i / dataset.length * 250;
-     })
-     .duration(500)
-     .text(function(d,i) { return d; })
-     .attr('x', function(d,i) {
-      return (xScale(i) + xScale.rangeBand() / 2);
-     })
-     .attr('y', function(d) {
-      return h - yScale(d) + 14;
-     });
+    svg.selectAll('text')
+       .data(dataset)
+       .transition()
+       .delay(function(d,i) {
+        return i / dataset.length * 250;
+       })
+       .duration(500)
+       .text(function(d,i) { return d; })
+       .attr('x', function(d,i) {
+        return (xScale(i) + xScale.rangeBand() / 2);
+       })
+       .attr('y', function(d) {
+        return h - yScale(d) + 14;
+       });
 
-  svg.select('#units')
-     .text('Gravity ( * standard)');
+    svg.select('#units')
+       .text('Gravity ( * standard)');
+  } else {
+    console.log('Data not yet loaded.');
+    d3.select('svg')
+      .append('text')
+      .attr('id', 'warning_text')
+      .attr('x', w / 2)
+      .attr('y', h / 2 - 100)
+      .attr('opacity', '0')
+      .attr('font-weight', 'bold')
+      .attr('font-size', '24')
+      .attr('fill', 'black')
+      .attr('text-anchor', 'middle')
+      .html(noDataMsg);
+    d3.select('#warning_text')
+      .transition(1000)
+      .attr('opacity', '1');
+    d3.select('#warning_text')
+      .transition(1000)
+      .delay(2000)
+      .attr('opacity', '0');
+  }
 });
 
 //Click event for Population
 d3.select('#Population').on('click', function() {
-  d3.event.preventDefault();
-  console.log('Clicked on Population');
-  dataset = normalize(populationData, 10);
+  if (dataPopulated) {
+    d3.event.preventDefault();
+    console.log('Clicked on Population');
+    dataset = normalize(populationData, 10);
 
-  xScale = d3.scale.ordinal()
-             .domain(d3.range(dataset.length))
-             .rangeRoundBands([0,w], 0.05);
+    xScale = d3.scale.ordinal()
+               .domain(d3.range(dataset.length))
+               .rangeRoundBands([0,w], 0.05);
 
-  yScale = d3.scale.linear()
-             .domain([0,d3.max(dataset)])
-             .range([h*0.2,h-(h*0.25)]);
+    yScale = d3.scale.linear()
+               .domain([0,d3.max(dataset)])
+               .range([h*0.2,h-(h*0.25)]);
 
-  svg.selectAll('rect')
-     .data(dataset)
-     .transition()
-     .delay(function(d,i) {
-      return i / dataset.length * 250;
-     })
-     .duration(500)
-     .attr('y', function(d) {
-      return ( h - yScale(d) );
-     })
-     .attr('height', function(d) {
-      return (yScale(d) - padding);
-     })
-     .attr('fill', function(d) {
-      return 'rgb(' + (d * 80) + ',' + (d * 10) + ',' + (d * 0) + ')';
-     });
+    svg.selectAll('rect')
+       .data(dataset)
+       .transition()
+       .delay(function(d,i) {
+        return i / dataset.length * 250;
+       })
+       .duration(500)
+       .attr('y', function(d) {
+        return ( h - yScale(d) );
+       })
+       .attr('height', function(d) {
+        return (yScale(d) - padding);
+       })
+       .attr('fill', function(d) {
+        return 'rgb(' + (d * 80) + ',' + (d * 10) + ',' + (d * 0) + ')';
+       });
 
-  svg.selectAll('text')
-     .data(dataset)
-     .transition()
-     .delay(function(d,i) {
-      return i / dataset.length * 250;
-     })
-     .duration(500)
-     .text(function(d,i) { return populationData[i]; })
-     .attr('x', function(d,i) {
-      return (xScale(i) + xScale.rangeBand() / 2);
-     })
-     .attr('y', function(d) {
-      return h - yScale(d) + 14;
-     });
+    svg.selectAll('text')
+       .data(dataset)
+       .transition()
+       .delay(function(d,i) {
+        return i / dataset.length * 250;
+       })
+       .duration(500)
+       .text(function(d,i) 
+        { 
+          if (populationData[i] === '0') {
+            return 'unknown';
+          } else { 
+            return populationData[i]; 
+          }
+        })
+       .attr('x', function(d,i) {
+        return (xScale(i) + xScale.rangeBand() / 2);
+       })
+       .attr('y', function(d) {
+        return h - yScale(d) + 14;
+       });
 
-  svg.select('#units')
-     .text('Population');
+    svg.select('#units')
+       .text('Population');
+  } else {
+    console.log('Data not yet loaded.');
+    d3.select('svg')
+      .append('text')
+      .attr('id', 'warning_text')
+      .attr('x', w / 2)
+      .attr('y', h / 2 - 100)
+      .attr('opacity', '0')
+      .attr('font-weight', 'bold')
+      .attr('font-size', '24')
+      .attr('fill', 'black')
+      .attr('text-anchor', 'middle')
+      .html(noDataMsg);
+    d3.select('#warning_text')
+      .transition(1000)
+      .attr('opacity', '1');
+    d3.select('#warning_text')
+      .transition(1000)
+      .delay(2000)
+      .attr('opacity', '0');
+  }
 });
 
 //Refactor to one "click" function

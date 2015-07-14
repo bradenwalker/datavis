@@ -8,9 +8,13 @@ var buttonArr = ['Gravity',
 
 
 //Attach buttons to DOM
-d3.select('body')
-  .append('div')
-  .attr('id', 'button_div');
+// d3.select('body')
+//   .append('div')
+//   .attr('id', 'button_div');
+var button_div = document.createElement('DIV');
+button_div.id = 'button_div';
+var the_svg = document.querySelector('svg');
+document.body.insertBefore(button_div, the_svg);
 
 d3.selectAll('#button_div')
   .selectAll('button')
@@ -342,13 +346,3 @@ d3.select('#Population').on('click', function() {
 // changeOnClick('#Rotation-Period', rotationData, false, null, 0, h-(h*0.5), 4, 8, 4, 'Rotation (Hours)');
 
 // changeOnClick('#Orbital-Period', orbitalData, true, 5500, 50, h-20, 0.05 * 2, 0.05 * 2, 0.05 * 8, 'Orbital Period (Days)');
-
-
-
-
-
-
-
-
-
-

@@ -2,7 +2,7 @@
 // var rotationData = ['24', '24', '24', '23', '23', '18', '26', '24', '27'];
 // var orbitalData = ['364', '481', '549', '341', '5110', '402', '312', '368', '463', '256'];
 // var diameterData = ['12500', '10200', '7200', '8900', '118000', '4900', '12120', '12240', '19720', '11370'];
-var gravityData = ['1', '1', '1.1', '1.4', '0.85', '1', '1', '1', '0.9'];
+// var gravityData = ['1', '1', '1.1', '1.4', '0.85', '1', '1', '1', '0.9'];
 // var populationData = ['2000000000', '1000', '500', '250', '30000000', '4500000000', '1000000000000', '1000000000', '100000000000'];
 
 
@@ -23,12 +23,13 @@ var dataBtnDiv = document.createElement('DIV');
 dataBtnDiv.id = "data_btn_div";
 dataBtnDiv.classList.add('data_btn_div');
 dataBtnDiv.appendChild(dataBtn);
-body.insertBefore(dataBtnDiv, btnDiv);
+body.appendChild(dataBtnDiv);
 var spinner = document.createElement('IMG');
 spinner.setAttribute('src', 'loading.gif');
 spinner.setAttribute('height', '25px');
 spinner.setAttribute('width', '25px');
 var successText = document.createElement('P');
+successText.id = 'success';
 successText.innerHTML = "Data loaded!";
 
 
@@ -36,7 +37,7 @@ successText.innerHTML = "Data loaded!";
 dataBtn = document.getElementById('dataBtn');
 dataBtn.onclick = function () {
 	console.log('Clicked it. (¬‿¬)');
-	dataBtn.setAttribute('style', 'opacity:0');
+	dataBtn.setAttribute('style', 'display:none');
 	dataBtnDiv.appendChild(spinner);
 
 	var httpRequest = new XMLHttpRequest();
@@ -47,8 +48,13 @@ dataBtn.onclick = function () {
 				serverData = JSON.parse(httpRequest.responseText);
 				console.log(serverData);
 				parseServerData();
-				spinner.setAttribute('style', 'opacity:0');
-				body.insertBefore(successText, btnDiv);
+				spinner.setAttribute('style', 'display:none');
+				dataBtnDiv.appendChild(successText);
+				d3.select('#success')
+				  .attr('style', 'color:rgba(0,0,0,1)')
+				  .transition(4000)
+				  .delay(2000)
+				  .attr('style', 'color:rgba(0,0,0,0)');
 			} else {
 				console.error('Error: ' + httpRequest.status);
 			}
@@ -80,6 +86,8 @@ var parseServerData = function () {
 	}
 	console.log(populationData);
 };
+
+
 
 
 

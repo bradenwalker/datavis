@@ -33,3 +33,15 @@ body {
 button {
 	font-size: 14px;
 }
+
+.data_btn_div {
+	margin: 10px;
+}
+
+#button_div {
+	margin: -100px auto;
+}
+
+p {
+	text-align: center;
+}

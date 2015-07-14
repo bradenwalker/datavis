@@ -5,12 +5,7 @@ var buttonArr = ['Gravity',
 				 'Diameter',
 				 'Population'];
 
-//Different datasets
-var rotationData = ['24', '24', '24', '23', '23', '18', '26', '24', '27'];
-var orbitalData = ['364', '481', '549', '341', '402', '312', '368', '463', '256'];
-var diameterData = ['12500', '10200', '7200', '8900', '4900', '12120', '12240', '19720', '11370'];
-var gravityData = ['1', '1', '1.1', '1.4', '0.85', '1', '1', '1', '0.9'];
-var populationData = ['2000000000', '1000', '500', '250', '30000000', '4500000000', '1000000000000', '1000000000', '100000000000'];
+
 
 //Attach buttons to DOM
 d3.select('body')
@@ -27,10 +22,10 @@ d3.selectAll('#button_div')
   	return d;
   });
 
-//Test click event for Rotation Period
+//Click event for Rotation Period
 d3.select('#Rotation-Period').on('click', function() {
   d3.event.preventDefault();
-  console.log('clicked on Rotation Period');
+  console.log('Clicked on Rotation Period');
   dataset = rotationData;
 
   xScale = d3.scale.ordinal()
@@ -280,3 +275,70 @@ d3.select('#Population').on('click', function() {
   svg.select('#units')
      .text('Population');
 });
+
+//Refactor to one "click" function
+// var changeOnClick = function (buttonID, newDataSet, normalizeTF, normVal, minRange, maxRange, rVal, gVal, bVal, unitText) {
+//   if (normalizeTF) {
+//     dataset = normalize(newDataSet, normVal);
+//   } else {
+//     dataset = newDataSet;
+//   }
+  
+//   d3.select(buttonID).on('click', function() {
+//   d3.event.preventDefault();
+//   console.log('Clicked on ' + buttonID);
+
+//   yScale = d3.scale.linear()
+//              .domain([0,d3.max(dataset)])
+//              .range([minRange, maxRange]);
+
+//   svg.selectAll('rect')
+//      .data(dataset)
+//      .transition()
+//      .delay(function(d,i) {
+//       return i / dataset.length * 250;
+//      })
+//      .duration(500)
+//      .attr('y', function(d) {
+//       return ( h - yScale(d) );
+//      })
+//      .attr('height', function(d) {
+//       return (yScale(d) - padding);
+//      })
+//      .attr('fill', function(d) {
+//       return 'rgb(' + (d * rVal) + ',' + (d * gVal) + ',' + (d * bVal) + ')';
+//      });
+
+//   svg.selectAll('text')
+//      .data(dataset)
+//      .transition()
+//      .delay(function(d,i) {
+//       return i / dataset.length * 250;
+//      })
+//      .duration(500)
+//      .text(function(d,i) { return newDataSet[i]; })
+//      .attr('x', function(d,i) {
+//       return (xScale(i) + xScale.rangeBand() / 2);
+//      })
+//      .attr('y', function(d) {
+//       return h - yScale(d) + 14;
+//      });
+
+//   svg.select('#units')
+//      .text(unitText);
+//   });
+// };
+
+// changeOnClick('#Rotation-Period', rotationData, false, null, 0, h-(h*0.5), 4, 8, 4, 'Rotation (Hours)');
+
+// changeOnClick('#Orbital-Period', orbitalData, true, 5500, 50, h-20, 0.05 * 2, 0.05 * 2, 0.05 * 8, 'Orbital Period (Days)');
+
+
+
+
+
+
+
+
+
+

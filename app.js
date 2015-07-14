@@ -13,7 +13,7 @@ var randData = function(numElements) {
   return newArr;
 };
 
-var dataset = ['0', '0', '0', '0', '0', '0', '0', '0', '0'];
+var dataset = ['0', '0', '0', '0', '0', '0', '0', '0', '0', '0'];
 
 var labeldata = dataset;
 
@@ -35,7 +35,7 @@ var normalize = function(arr, val) {
 dataset = normalize(dataset, 20);
 
 //Set up SVG height and width
-var w = 700;
+var w = 800;
 var h = 300;
 var padding = 40;
 
@@ -59,6 +59,7 @@ var axisLabels = ['Alderaan',
                   'Yavin IV',
                   'Hoth',
                   'Dagobah',
+                  'Bespin',
                   'Endor',
                   'Naboo',
                   'Coruscant',
@@ -104,7 +105,7 @@ var labels = svg.selectAll('text')
                   return 0;
                 })
                 .attr('fill', 'white')
-                .attr('font-size', '9px')
+                .attr('font-size', '10px')
                 .attr('text-anchor', 'middle');
 
 //Generate x-axis

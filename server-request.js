@@ -1,8 +1,8 @@
 //Client-side datasets
 // var rotationData = ['24', '24', '24', '23', '23', '18', '26', '24', '27'];
-// var orbitalData = ['364', '481', '549', '341', '402', '312', '368', '463', '256'];
-// var diameterData = ['12500', '10200', '7200', '8900', '4900', '12120', '12240', '19720', '11370'];
-// var gravityData = ['1', '1', '1.1', '1.4', '0.85', '1', '1', '1', '0.9'];
+// var orbitalData = ['364', '481', '549', '341', '5110', '402', '312', '368', '463', '256'];
+// var diameterData = ['12500', '10200', '7200', '8900', '118000', '4900', '12120', '12240', '19720', '11370'];
+var gravityData = ['1', '1', '1.1', '1.4', '0.85', '1', '1', '1', '0.9'];
 // var populationData = ['2000000000', '1000', '500', '250', '30000000', '4500000000', '1000000000000', '1000000000', '100000000000'];
 
 
@@ -65,7 +65,13 @@ var parseServerData = function () {
 		rotationData.push(serverData.results[i].rotation_period);
 		orbitalData.push(serverData.results[i].orbital_period);
 		diameterData.push(serverData.results[i].diameter);
-		gravityData.push(serverData.results[0].gravity.slice(0,1));
+		if(serverData.results[i].gravity[1] === '.') {
+			gravityData.push(serverData.results[i].gravity.slice(0,3));
+		} else if (serverData.results[i].gravity[0] === 'N') {
+			gravityData.push('1');
+		} else {
+			gravityData.push(serverData.results[i].gravity.slice(0,1));
+		}
 		if(serverData.results[i].population !== 'unknown') {
 			populationData.push(serverData.results[i].population);
 		} else {

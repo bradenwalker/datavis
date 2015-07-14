@@ -77,7 +77,7 @@ d3.select('#Orbital-Period').on('click', function() {
   d3.event.preventDefault();
   console.log('Clicked on Orbital Period');
   labelData = orbitalData;
-  dataset = normalize(orbitalData, 5500);
+  dataset = normalize(orbitalData, 51125);
   for (var i = 0; i < dataset.length; i++) {
       dataset[i] = dataset[i] / 10;
     }
@@ -88,7 +88,7 @@ d3.select('#Orbital-Period').on('click', function() {
 
   yScale = d3.scale.linear()
              .domain([0,d3.max(dataset)])
-             .range([50,h-20]);
+             .range([100,h-20]);
 
   svg.selectAll('rect')
      .data(dataset)
@@ -104,7 +104,11 @@ d3.select('#Orbital-Period').on('click', function() {
       return (yScale(d) - padding);
      })
      .attr('fill', function(d) {
-      return 'rgb(' + (d * .05 * 2) + ',' + (d * .05 * 2) + ',' + (d * .05 * 8) + ')';
+      if (d < 1000) {
+        return 'rgb(' + (d * .05 * 2) + ',' + (d * .05 * 2) + ',' + (d/2 * .05 * 8) + ')';
+      } else {
+        return 'rgb(' + (d/10 * .05 * 2) + ',' + (d/50 * .05 * 2) + ',' + (d/10 * .05 * 8) + ')';
+      }
      });
 
   svg.selectAll('text')
@@ -138,7 +142,7 @@ d3.select('#Diameter').on('click', function() {
 
   yScale = d3.scale.linear()
              .domain([0,d3.max(dataset)])
-             .range([0,h-(h*0.1)]);
+             .range([100,h-(h*0.1)]);
 
   svg.selectAll('rect')
      .data(dataset)
@@ -154,7 +158,13 @@ d3.select('#Diameter').on('click', function() {
       return (yScale(d) - padding);
      })
      .attr('fill', function(d) {
-      return 'rgb(' + (d * 8) + ',' + (d * 6) + ',' + (d * 4) + ')';
+      if (d < 10) {
+        var multiplier = 10;
+        return 'rgb(' + (d * multiplier * 8) + ',' + (d * multiplier * 6) + ',' + (d * multiplier * 4) + ')';
+      } else {
+        var limiter = .55;
+        return 'rgb(' + (d/limiter * 8) + ',' + (d/limiter * 6) + ',' + (d/limiter * 4) + ')'; 
+      }
      });
 
   svg.selectAll('text')

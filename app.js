@@ -19,7 +19,7 @@ var dataset = ['12500', '10200', '7200', '8900', '4900', '12120', '12240', '1972
 var labeldata = dataset;
 
 //Normalize data
-var normalize = function(arr) {
+var normalize = function(arr, val) {
   var normDataset = [];
 
   var max = function (arr) {
@@ -27,13 +27,13 @@ var normalize = function(arr) {
   };
 
   for (var i = 0; i < arr.length; i++) {
-    normDataset[i] = Math.round( arr[i] / max(arr) * 20 );
+    normDataset[i] = Math.round( arr[i] / max(arr) * val );
   }
 
   return normDataset;
 };
 
-dataset = normalize(dataset);
+dataset = normalize(dataset, 20);
 
 //Set up SVG height and width
 var w = 600;
@@ -67,7 +67,7 @@ var axisLabels = ['Alderaan',
                   'Geonosis'];
 
 //Set up units
-var units = '(Diameter)';
+var units = 'Diameter';
 
 var formatLabel = function(d) {
   return axisLabels[d % axisLabels.length];
@@ -113,7 +113,7 @@ var labels = svg.selectAll('text')
                 })
                 .attr('fill', 'white')
                 .attr('font-family', 'sans-serif')
-                .attr('font-size', '11px')
+                .attr('font-size', '8px')
                 .attr('text-anchor', 'middle');
 
 //Generate axes
@@ -125,8 +125,10 @@ svg.append('g')
 //Generate units
 svg.append('text')
    .attr('font-family', 'sans-serif')
-   .attr('font-size', '11px')
+   .attr('font-weight', 'bold')
+   .attr('font-size', '14px')
    .attr('text-anchor', 'middle')
+   .attr('id', 'units')
    .attr('transform', 'translate(' + w / 2 + ',' + (h - padding * 0.1) + ')')
    .text(units);
 
